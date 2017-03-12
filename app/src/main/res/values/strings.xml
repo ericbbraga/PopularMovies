@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PopularMovies</string>
+    <string name="error_message">An error occured when the application tried get information about movies. Please try again.</string>
 </resources>
