@@ -1,10 +1,13 @@
 package br.com.ericbraga.popularmovies.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by ericbraga25.
  */
 
-public class MovieInfo {
+public class MovieInfo implements Parcelable{
 
     private String mTitle;
     private String mReleaseDate;
@@ -18,6 +21,14 @@ public class MovieInfo {
         mPosterPath = posterPath;
         mPlotSynopsis = synopsis;
         mRating = rating;
+    }
+
+    private MovieInfo(Parcel source) {
+        mTitle = source.readString();
+        mReleaseDate = source.readString();
+        mPosterPath = source.readString();
+        mPlotSynopsis = source.readString();
+        mRating = source.readDouble();
     }
 
     public String getTitle() {
@@ -39,4 +50,30 @@ public class MovieInfo {
     public double getRating() {
         return mRating;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mTitle);
+        dest.writeString(mReleaseDate);
+        dest.writeString(mPosterPath);
+        dest.writeString(mPlotSynopsis);
+        dest.writeDouble(mRating);
+    }
+
+    public static  final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {
+        @Override
+        public MovieInfo createFromParcel(Parcel parcel) {
+            return new MovieInfo(parcel);
+        }
+
+        @Override
+        public MovieInfo[] newArray(int i) {
+            return new MovieInfo[i];
+        }
+    };
 }

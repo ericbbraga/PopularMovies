@@ -1,5 +1,6 @@
-package br.com.ericbraga.popularmovies;
+package br.com.ericbraga.popularmovies.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ericbraga.popularmovies.R;
+import br.com.ericbraga.popularmovies.configuration.Configurations;
 import br.com.ericbraga.popularmovies.domain.MovieInfo;
 import br.com.ericbraga.popularmovies.view.MovieAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieClickHandler{
 
     private RecyclerView mRecyclerView;
 
@@ -37,11 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         List<MovieInfo> movies = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            MovieInfo fake = new MovieInfo("fake movie " + i, "2017-01-01", "/posterpath", "Synopsis fake", i);
+            MovieInfo fake = new MovieInfo("fake movie #" + i, "2017-01-01", "/posterpath", "Synopsis fake", i);
             movies.add(fake);
         }
 
         MovieAdapter adapter = new MovieAdapter(movies);
+        adapter.setMovieHandler(this);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -51,5 +55,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void hideErrorMessage() {
         mErrorMessageTextView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onItemClick(MovieInfo movie) {
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra(Configurations.MOVIE_PARCEABLE_EXTRA, movie);
+        startActivity(intent);
     }
 }

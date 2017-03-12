@@ -8,5 +8,6 @@
     <ImageView
         android:id="@+id/iv_poster_preview"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="300dp"
+        android:contentDescription="@string/movie_poster_content_description"/>
 </FrameLayout>
