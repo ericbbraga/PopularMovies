@@ -12,6 +12,7 @@ import java.util.List;
 
 import br.com.ericbraga.popularmovies.R;
 import br.com.ericbraga.popularmovies.domain.MovieInfo;
+import br.com.ericbraga.popularmovies.network.MovieImageLoader;
 
 /**
  * Created by ericbraga25.
@@ -23,22 +24,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private MovieClickHandler mClickHandler;
 
+    private MovieImageLoader mMovieLoader;
+
     public interface MovieClickHandler {
         void onItemClick(MovieInfo movie);
     }
 
-    public MovieAdapter(List<MovieInfo> movies) {
+    public MovieAdapter(Context context) {
         mMovies = new ArrayList<>();
-        mMovies.addAll(movies);
+        mMovieLoader = new MovieImageLoader(context, MovieImageLoader.MovieImageQuality.NORMAL);
     }
 
     public void setMovieHandler(MovieClickHandler handler) {
         mClickHandler = handler;
     }
 
-    public void updateMovies(List<MovieInfo> movies) {
+    public void setMovies(List<MovieInfo> movies) {
         mMovies.clear();
-        movies.addAll(movies);
+        mMovies.addAll(movies);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -52,7 +56,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        holder.mPosterImageView.setImageResource(android.R.drawable.star_on);
+        MovieInfo movieInfo = mMovies.get(position);
+        mMovieLoader.loadImage(movieInfo, holder.mPosterImageView);
     }
 
     @Override
@@ -67,7 +72,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         public MovieAdapterViewHolder(View itemView) {
             super(itemView);
             mPosterImageView = (ImageView) itemView.findViewById(R.id.iv_poster_preview);
-
             itemView.setOnClickListener(this);
         }
 
@@ -78,7 +82,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 MovieInfo movie = mMovies.get(position);
                 mClickHandler.onItemClick(movie);
             }
-
         }
     }
 }

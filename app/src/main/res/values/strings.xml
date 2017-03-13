@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">PopularMovies</string>
+    <string name="app_name">Popular Movies</string>
     <string name="error_message">An error occured when the application tried get information about movies. Please try again.</string>
     <string name="movie_poster_content_description">Movie Poster</string>
+    <string name="title_popular_movies">Popular Movies</string>
+    <string name="title_top_rated_movies">Top Rated Movies</string>
 </resources>

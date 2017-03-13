@@ -15,8 +15,6 @@ import br.com.ericbraga.popularmovies.R;
 
 public class Configurations {
 
-    public static final String MOVIE_PARCEABLE_EXTRA = "MOVIE_EXTRA";
-
     private final Context mContext;
 
     public Configurations(Context context) {
@@ -33,6 +31,8 @@ public class Configurations {
             throw new ConfigurationException(e.getMessage());
         }
     }
+
+
 
 
 }

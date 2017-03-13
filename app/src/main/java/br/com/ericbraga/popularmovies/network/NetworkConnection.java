@@ -27,21 +27,42 @@ public class NetworkConnection {
 
     private Uri mUri;
 
-    public NetworkConnection(Context ctx, Uri mUri) {
-        mContext = ctx;
+    public NetworkConnection(Context context, Uri mUri) {
+        mContext = context;
         this.mUri = mUri;
     }
 
     public String getResponseFromUri() throws NetWorkConnectionException {
-
         if (! isDeviceConnectedToInternet() ) {
-            throw new NetWorkConnectionException("The device is not connected to internet, please enable it for continue");
+            final String message =
+                    "The device is not connected to internet, please enable it to continue";
+            throw new NetWorkConnectionException(message);
         }
 
         URL url = makeUrlBasedOnUri();
         return getResponse(url);
     }
 
+    private boolean isDeviceConnectedToInternet() {
+        ConnectivityManager cm =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @NonNull
+    private URL makeUrlBasedOnUri() throws NetWorkConnectionException {
+        URL url;
+        try {
+            url = new URL(mUri.toString());
+        } catch (MalformedURLException e) {
+            String exceptionMessage = String.format("Malformed URL %s://%s", mUri.getScheme(), mUri.getHost());
+            throw new NetWorkConnectionException(exceptionMessage);
+        }
+        return url;
+    }
+
+    @NonNull
     private String getResponse(URL url) throws NetWorkConnectionException {
         StringBuilder response = new StringBuilder();
 
@@ -60,7 +81,7 @@ public class NetworkConnection {
             }
 
         } catch (IOException e){
-            String exceptionMessage = String.format("Could not connect with %s", url.toString());
+            String exceptionMessage = String.format("Could not connect with %s", url.getHost());
             throw new NetWorkConnectionException(exceptionMessage);
 
         } finally {
@@ -72,11 +93,7 @@ public class NetworkConnection {
                 if (reader != null) {
                     reader.close();
                 }
-            } catch (IOException e) {
-                Log.i(TAG, e.getMessage());
-            }
 
-            try {
                 if (is != null) {
                     is.close();
                 }
@@ -86,25 +103,5 @@ public class NetworkConnection {
         }
 
         return response.toString();
-    }
-
-    @NonNull
-    private URL makeUrlBasedOnUri() throws NetWorkConnectionException {
-        URL url;
-        try {
-            url = new URL(mUri.toString());
-        } catch (MalformedURLException e) {
-            String exceptionMessage = String.format("%s not found", mUri.toString());
-            throw new NetWorkConnectionException(exceptionMessage);
-        }
-        return url;
-    }
-
-
-    private boolean isDeviceConnectedToInternet() {
-        ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
