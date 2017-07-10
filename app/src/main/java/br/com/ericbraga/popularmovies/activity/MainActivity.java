@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             super.onPostExecute(movies);
             hideProgressBar();
 
-            // TODO: Handler the errors
             if (movies == null) {
                 showErrorMessage();
                 hideMovieInfoData();
@@ -182,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 showMovieInfoData();
                 mAdapter.setMovies(movies);
             }
-
         }
     }
 

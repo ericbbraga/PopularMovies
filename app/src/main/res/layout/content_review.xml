@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="br.com.ericbraga.popularmovies.activity.TrailerActivity">
+    android:orientation="vertical">
 
-    <include layout="@layout/block_info_detail" />
+    <include layout="@layout/block_info_detail"/>
 
     <FrameLayout
         android:layout_height="match_parent"
@@ -24,11 +22,19 @@
             android:id="@+id/tv_error_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/error_message_trailers"
+            android:text="@string/error_message_reviews"
+            style="@style/TextAppearance.AppCompat.Headline"
             android:visibility="invisible"/>
 
-        <include layout="@layout/trailer_layout"/>
+        <TextView
+            android:id="@+id/tv_empty_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:text="@string/empty_reviews_list"
+            android:visibility="invisible"/>
 
+        <include layout="@layout/review_layout"/>
 
     </FrameLayout>
 

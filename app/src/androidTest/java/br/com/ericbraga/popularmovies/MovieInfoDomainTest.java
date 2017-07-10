@@ -52,7 +52,7 @@ public class MovieInfoDomainTest {
         Assert.assertTrue(popularMovies.size() >= 1);
 
         for (MovieInfo movie: popularMovies) {
-            List<MovieTrailer> trailers = movie.getTrailers();
+            List<MovieTrailer> trailers = movieInfoDomain.getTrailersFrom(movie);
             Assert.assertTrue(trailers.size() >= 1);
 
 

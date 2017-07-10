@@ -3,9 +3,6 @@ package br.com.ericbraga.popularmovies.domain;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by ericbraga25.
  */
@@ -19,8 +16,6 @@ public class MovieInfo implements Parcelable {
     private String mPlotSynopsis;
     private double mRating;
 
-    private List<MovieTrailer> mTrailers;
-
     public MovieInfo(int id, String title, String releaseDate, String posterPath, String synopsis, double rating) {
         mId = id;
         mTitle = title;
@@ -28,7 +23,6 @@ public class MovieInfo implements Parcelable {
         mPosterPath = posterPath;
         mPlotSynopsis = synopsis;
         mRating = rating;
-        mTrailers = new ArrayList<>();
     }
 
     private MovieInfo(Parcel source) {
@@ -38,16 +32,6 @@ public class MovieInfo implements Parcelable {
         mPosterPath = source.readString();
         mPlotSynopsis = source.readString();
         mRating = source.readDouble();
-        mTrailers = new ArrayList<>();
-        source.readTypedList(mTrailers, MovieTrailer.CREATOR);
-    }
-
-    public void addTrailer(MovieTrailer trailer) {
-        mTrailers.add(trailer);
-    }
-
-    public void addTrailer(List<MovieTrailer> trailers) {
-        mTrailers.addAll(trailers);
     }
 
     public int getId() {
@@ -74,10 +58,6 @@ public class MovieInfo implements Parcelable {
         return mRating;
     }
 
-    public List<MovieTrailer> getTrailers() {
-        return mTrailers;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -91,7 +71,6 @@ public class MovieInfo implements Parcelable {
         dest.writeString(mPosterPath);
         dest.writeString(mPlotSynopsis);
         dest.writeDouble(mRating);
-        dest.writeTypedList(mTrailers);
     }
 
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {
