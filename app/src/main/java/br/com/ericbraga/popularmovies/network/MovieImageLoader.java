@@ -14,7 +14,7 @@ import br.com.ericbraga.popularmovies.domain.MovieInfo;
 
 public class MovieImageLoader {
 
-    private final String BASE_URL = "http://image.tmdb.org/t/p/";
+    private static final String BASE_URL = "http://image.tmdb.org/t/p/";
 
     public enum MovieImageQuality {
         BASIC("w92"),

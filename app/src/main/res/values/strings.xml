@@ -4,4 +4,8 @@
     <string name="movie_poster_content_description">Movie Poster</string>
     <string name="title_popular_movies">Popular Movies</string>
     <string name="title_top_rated_movies">Top Rated Movies</string>
+    <string name="open_with">Open With</string>
+    <string name="trailers">Trailers</string>
+    <string name="title_activity_trailer">TrailerActivity</string>
+    <string name="reviews">Reviews</string>
 </resources>

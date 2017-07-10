@@ -1,7 +1,6 @@
 package br.com.ericbraga.popularmovies;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,15 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import br.com.ericbraga.popularmovies.domain.MovieInfo;
-import br.com.ericbraga.popularmovies.parser.JSonMovieParserException;
 import br.com.ericbraga.popularmovies.parser.JSonMovieParser;
+import br.com.ericbraga.popularmovies.parser.JSonMovieParserException;
+import br.com.ericbraga.popularmovies.parser.JSonParser;
+import br.com.ericbraga.popularmovies.testutils.Util;
 
 /**
  * Created by ericbraga25.
@@ -36,16 +34,16 @@ public class JSonMovieParserUnitTest {
 
     @Test
     public void jsonParserShouldReturnZeroForEmptyResult()  {
-        JSonMovieParser parser = null;
+        JSonParser parser = null;
         try {
-            parser = new JSonMovieParser( readResourceAsset(ctx, "empty_result.json") );
+            parser = new JSonMovieParser( Util.readResourceAsset(ctx, "empty_result.json") );
         } catch (IOException e) {
             Assert.fail("Resource not found empty_result.json");
         }
 
         List<MovieInfo> movies = null;
         try {
-            movies = parser.extractMovies();
+            movies = parser.extract();
         } catch (JSonMovieParserException e) {
             Assert.fail(e.getMessage());
         }
@@ -54,16 +52,16 @@ public class JSonMovieParserUnitTest {
 
     @Test
     public void jsonParserShouldGetInfoFromNonEmptyResult() {
-        JSonMovieParser parser = null;
+        JSonParser parser = null;
         try {
-            parser = new JSonMovieParser( readResourceAsset(ctx, "one_result.json") );
+            parser = new JSonMovieParser( Util.readResourceAsset(ctx, "one_result.json") );
         } catch (IOException e) {
             Assert.fail("Resource not found one_result.json");
         }
 
         List<MovieInfo> movies = null;
         try {
-            movies = parser.extractMovies();
+            movies = parser.extract();
         } catch (JSonMovieParserException e) {
             Assert.fail(e.getMessage());
         }
@@ -73,39 +71,23 @@ public class JSonMovieParserUnitTest {
         MovieInfo movieInfo = movies.get(0);
         Assert.assertEquals("Sing", movieInfo.getTitle());
         Assert.assertEquals(6.7, movieInfo.getRating());
-        Assert.assertEquals("2016-12-02", movieInfo.getReleaseDate());
+        Assert.assertEquals("2016", movieInfo.getReleaseDate());
     }
 
     @Test
     public void jsonParserShouldThrowAnExceptionForInvalidExpectedFormat() {
-        JSonMovieParser parser = null;
+        JSonParser parser = null;
         try {
-            parser = new JSonMovieParser( readResourceAsset(ctx, "invalid.json") );
+            parser = new JSonMovieParser( Util.readResourceAsset(ctx, "invalid.json") );
         } catch (IOException e) {
             Assert.fail("Resource not found invalid.json");
         }
 
         try {
-            parser.extractMovies();
+            parser.extract();
             Assert.fail("Should throw an exception");
         } catch (JSonMovieParserException e) {
             Assert.assertTrue(true);
         }
     }
-
-    @NonNull
-    private String readResourceAsset(Context ctx, String assetName) throws IOException {
-        InputStream is = ctx.getResources().getAssets().open(assetName);
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-
-        while ( (line = bufferedReader.readLine()) != null ) {
-            sb.append(line);
-        }
-        return sb.toString();
-    }
-
 }

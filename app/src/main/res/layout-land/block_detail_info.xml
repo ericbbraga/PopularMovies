@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/detail_movie_info">
+
+    <include
+        android:layout_weight="0.85"
+        layout="@layout/block_movie_info_detailed"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
+    <include
+        android:layout_weight="0.15"
+        layout="@layout/block_trailer_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

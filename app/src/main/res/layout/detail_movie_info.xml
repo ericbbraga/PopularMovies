@@ -1,50 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="15dp">
+    <include
+        layout="@layout/block_info_detail" />
 
-        <ImageView
-            android:id="@+id/iv_poster_detail"
-            android:layout_height="300dp"
-            android:layout_width="match_parent"
-            android:scaleType="centerInside"
-            android:contentDescription="@string/movie_poster_content_description"/>
-
-        <TextView
-            android:id="@+id/tv_movie_title_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="25sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_movie_release_date_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="25sp"/>
-
-        <TextView
-            android:id="@+id/tv_movie_rating_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="25sp"/>
-
-        <TextView
-            android:id="@+id/tv_movie_synopsis_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start"
-            android:textSize="25sp" />
-
-    </LinearLayout>
-</ScrollView>
+    <include layout="@layout/block_detail_info" />
+</LinearLayout>

@@ -28,13 +28,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final int POPULAR = 1;
     private static final int TOP_RATED = 2;
 
-    private MovieInfoDomain movieDomain;
+    private MovieInfoDomain mMovieDomain;
 
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageTextView;
     private ProgressBar mLoadingIndicator;
 
-    private MovieAdapter adapter;
+    private MovieAdapter mAdapter;
     private int mLatestOption;
 
     @Override
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Context context = this;
         MovieAdapter.MovieClickHandler handler = this;
 
-        movieDomain = new MovieInfoDomain(context);
+        mMovieDomain = new MovieInfoDomain(context);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_list);
         mErrorMessageTextView = (TextView) findViewById(R.id.tv_error_message_display);
@@ -57,9 +57,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
 
-        adapter = new MovieAdapter(context);
-        adapter.setMovieHandler(handler);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new MovieAdapter(context);
+        mAdapter.setMovieHandler(handler);
+        mRecyclerView.setAdapter(mAdapter);
 
         loadPopularMovies();
     }
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             } else {
                 hideErrorMessage();
                 showMovieInfoData();
-                adapter.setMovies(movies);
+                mAdapter.setMovies(movies);
             }
 
         }
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         List<MovieInfo> getMovies()
                 throws JSonMovieParserException, NetWorkConnectionException {
-            return movieDomain.getPopularMovies();
+            return mMovieDomain.getPopularMovies();
         }
     }
 
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         List<MovieInfo> getMovies()
                 throws JSonMovieParserException, NetWorkConnectionException {
-            return movieDomain.getTopRatedMovies();
+            return mMovieDomain.getTopRatedMovies();
         }
     }
 
