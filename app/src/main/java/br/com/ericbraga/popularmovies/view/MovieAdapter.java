@@ -32,7 +32,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     public MovieAdapter(Context context) {
         mMovies = new ArrayList<>();
-        mMovieLoader = new MovieImageLoader(context, MovieImageLoader.MovieImageQuality.NORMAL);
+        mMovieLoader = new MovieImageLoader(context);
     }
 
     public void setMovieHandler(MovieClickHandler handler) {

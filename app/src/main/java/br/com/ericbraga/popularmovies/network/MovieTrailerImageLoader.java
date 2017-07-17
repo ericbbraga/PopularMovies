@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import br.com.ericbraga.popularmovies.domain.MovieTrailer;
 
@@ -26,6 +27,6 @@ public class MovieTrailerImageLoader {
     public void loadImage(MovieTrailer movieTrailer, ImageView view) {
         String imageURL = BASE_URL.replace(YOUTUBE_KEY, movieTrailer.getYoutubeKey());
         Uri uri = Uri.parse(imageURL).buildUpon().build();
-        Glide.with(mContext).load(uri).into(view);
+        Glide.with(mContext).load(uri).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
     }
 }

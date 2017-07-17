@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import br.com.ericbraga.popularmovies.domain.MovieInfo;
 
@@ -15,38 +16,20 @@ import br.com.ericbraga.popularmovies.domain.MovieInfo;
 public class MovieImageLoader {
 
     private static final String BASE_URL = "http://image.tmdb.org/t/p/";
-
-    public enum MovieImageQuality {
-        BASIC("w92"),
-        NORMAL("w185"),
-        BEST("w780");
-
-        private final String mQuality;
-
-        MovieImageQuality(String quality) {
-            mQuality = quality;
-        }
-
-        public String getQuality() {
-            return mQuality;
-        }
-    }
+    private static final String QUALITY_PARAM = "w185";
 
     private final Context mContext;
-    private final MovieImageQuality mQualityImageLoader;
 
-    public MovieImageLoader(Context context, MovieImageQuality quality) {
+    public MovieImageLoader(Context context) {
         mContext = context;
-        mQualityImageLoader = quality;
     }
 
     public void loadImage(MovieInfo movieInfo, ImageView view) {
-
         Uri uri = Uri.parse(BASE_URL).buildUpon()
-                .appendEncodedPath(mQualityImageLoader.getQuality())
+                .appendEncodedPath(QUALITY_PARAM)
                 .appendEncodedPath(movieInfo.getPosterPath())
                 .build();
 
-        Glide.with(mContext).load(uri).into(view);
+        Glide.with(mContext).load(uri).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
     }
 }

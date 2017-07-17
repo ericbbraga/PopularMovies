@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -171,10 +170,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             super.onPostExecute(movies);
             hideProgressBar();
 
-            if (movies == null) {
+            if (movies == null || movies.isEmpty()) {
                 showErrorMessage();
                 hideMovieInfoData();
-                Toast.makeText(MainActivity.this, mException.getMessage(), Toast.LENGTH_LONG).show();
 
             } else {
                 hideErrorMessage();

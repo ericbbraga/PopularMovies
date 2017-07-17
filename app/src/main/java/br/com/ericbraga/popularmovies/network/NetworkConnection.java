@@ -1,8 +1,6 @@
 package br.com.ericbraga.popularmovies.network;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -43,11 +41,8 @@ public class NetworkConnection {
         return getResponse(url);
     }
 
-    private boolean isDeviceConnectedToInternet() {
-        ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+    public boolean isDeviceConnectedToInternet() {
+        return NetworkUtils.isDeviceConnectedToInternet(mContext);
     }
 
     @NonNull

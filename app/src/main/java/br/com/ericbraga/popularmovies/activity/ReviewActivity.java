@@ -95,8 +95,9 @@ public class ReviewActivity extends Activity {
         protected void onPostExecute(List<MovieReview> reviews) {
             super.onPostExecute(reviews);
 
+            hideLoading();
+
             if (mRequestWorked) {
-                hideLoading();
 
                 if (reviews.size() == 0) {
                     showEmptyMessage();

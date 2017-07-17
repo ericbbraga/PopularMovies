@@ -105,8 +105,9 @@ public class TrailerActivity extends Activity implements TrailersAdapter.Trailer
         protected void onPostExecute(List<MovieTrailer> trailers) {
             super.onPostExecute(trailers);
 
+            hideLoading();
+
             if (mRequestWorked) {
-                hideLoading();
                 setTrailerView(trailers);
             } else {
                 showErrorMessage();

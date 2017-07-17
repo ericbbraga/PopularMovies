@@ -22,6 +22,11 @@
         <activity android:name=".activity.DetailActivity" />
         <activity android:name=".activity.TrailerActivity" />
         <activity android:name=".activity.ReviewActivity" />
+
+        <provider
+            android:authorities="br.com.ericbraga.movieprovider"
+            android:name=".data.MovieProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

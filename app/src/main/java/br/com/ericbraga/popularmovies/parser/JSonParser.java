@@ -15,20 +15,14 @@ public abstract class JSonParser<T> {
 
     private static final String RESULTS = "results";
 
-    private String mJson;
-
-    public JSonParser(String json) {
-        mJson = json;
-    }
-
     public abstract T makeObject(JSONObject jsonObject) throws JSONException;
 
-    public List<T> extract() throws JSonMovieParserException {
+    public List<T> extract(String json) throws JSonMovieParserException {
 
         List<T> extractedList = new ArrayList<>();
 
         try {
-            JSONObject jsonRootObject = new JSONObject(mJson);
+            JSONObject jsonRootObject = new JSONObject(json);
             JSONArray jsonResults = jsonRootObject.getJSONArray(RESULTS);
 
             for (int i = 0; i < jsonResults.length(); i++) {

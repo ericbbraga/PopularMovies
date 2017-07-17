@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import br.com.ericbraga.popularmovies.domain.MovieInfo;
+import br.com.ericbraga.popularmovies.domain.MovieType;
 import br.com.ericbraga.popularmovies.utils.Util;
 
 /**
@@ -19,8 +20,10 @@ public class JSonMovieParser extends JSonParser<MovieInfo> {
     private static final String MOVIE_OVERVIEW = "overview";
     private static final String MOVIE_VOTE_AVERAGE = "vote_average";
 
-    public JSonMovieParser(String json) {
-        super(json);
+    private final int mType;
+
+    public JSonMovieParser(@MovieType int type) {
+        mType = type;
     }
 
     @Override
@@ -32,6 +35,6 @@ public class JSonMovieParser extends JSonParser<MovieInfo> {
         String synopsis = jsonObject.getString(MOVIE_OVERVIEW);
         double rating = jsonObject.getDouble(MOVIE_VOTE_AVERAGE);
 
-        return new MovieInfo(id, title, releaseDate, posterPath, synopsis, rating);
+        return new MovieInfo(id, title, releaseDate, posterPath, synopsis, rating, false, mType);
     }
 }

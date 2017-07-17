@@ -14,10 +14,6 @@ public class JsonMovieTrailerParser extends JSonParser<MovieTrailer> {
     private static final String TRAILER_NAME = "name";
     private static final String TRAILER_YOUTUBE_KEY = "key";
 
-    public JsonMovieTrailerParser(String json) {
-        super(json);
-    }
-
     @Override
     public MovieTrailer makeObject(JSONObject jsonObject) throws JSONException {
         String id = jsonObject.getString(TRAILER_ID);

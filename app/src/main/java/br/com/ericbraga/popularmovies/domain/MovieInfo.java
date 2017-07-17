@@ -8,33 +8,38 @@ import android.os.Parcelable;
  */
 
 public class MovieInfo implements Parcelable {
-
-    private int mId;
+    private long mId;
     private String mTitle;
     private String mReleaseDate;
     private String mPosterPath;
     private String mPlotSynopsis;
     private double mRating;
+    private boolean mFavorite;
+    private int mMovieType;
 
-    public MovieInfo(int id, String title, String releaseDate, String posterPath, String synopsis, double rating) {
+    public MovieInfo(long id, String title, String releaseDate, String posterPath, String synopsis,
+                     double rating, boolean favorite, @MovieType int movieType) {
         mId = id;
         mTitle = title;
         mReleaseDate = releaseDate;
         mPosterPath = posterPath;
         mPlotSynopsis = synopsis;
         mRating = rating;
+        mFavorite = favorite;
+        mMovieType = movieType;
     }
 
     private MovieInfo(Parcel source) {
-        mId = source.readInt();
+        mId = source.readLong();
         mTitle = source.readString();
         mReleaseDate = source.readString();
         mPosterPath = source.readString();
         mPlotSynopsis = source.readString();
         mRating = source.readDouble();
+        mFavorite = source.readInt() == 1;
     }
 
-    public int getId() {
+    public long getId() {
         return mId;
     }
 
@@ -58,6 +63,18 @@ public class MovieInfo implements Parcelable {
         return mRating;
     }
 
+    public boolean isFavorite() {
+        return mFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.mFavorite = favorite;
+    }
+
+    public int getType() {
+        return mMovieType;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -65,12 +82,13 @@ public class MovieInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mId);
+        dest.writeLong(mId);
         dest.writeString(mTitle);
         dest.writeString(mReleaseDate);
         dest.writeString(mPosterPath);
         dest.writeString(mPlotSynopsis);
         dest.writeDouble(mRating);
+        dest.writeInt(mFavorite ? 1 : 0);
     }
 
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {
@@ -84,4 +102,6 @@ public class MovieInfo implements Parcelable {
             return new MovieInfo[i];
         }
     };
+
+
 }

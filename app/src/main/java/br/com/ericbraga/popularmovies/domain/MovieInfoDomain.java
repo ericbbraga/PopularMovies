@@ -1,13 +1,19 @@
 package br.com.ericbraga.popularmovies.domain;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ericbraga.popularmovies.configuration.Configurations;
+import br.com.ericbraga.popularmovies.data.MovieContract;
 import br.com.ericbraga.popularmovies.network.NetWorkConnectionException;
 import br.com.ericbraga.popularmovies.network.NetworkConnection;
+import br.com.ericbraga.popularmovies.network.NetworkUtils;
 import br.com.ericbraga.popularmovies.parser.JSonMovieParser;
 import br.com.ericbraga.popularmovies.parser.JSonMovieParserException;
 import br.com.ericbraga.popularmovies.parser.JSonParser;
@@ -20,17 +26,11 @@ import br.com.ericbraga.popularmovies.parser.JsonMovieTrailerParser;
 
 public class MovieInfoDomain {
     private static final String MOVIEDB_API_URL = "http://api.themoviedb.org/3/";
-
     private static final String POPULAR_MOVIE_END_POINT = "movie/popular";
-
     private static final String TOP_RATED_END_POINT = "movie/top_rated";
-
     private static final String MOVIE_ID_PARAM = "{id}";
-
     private static final String TRAILER_END_POINT = "movie/" + MOVIE_ID_PARAM + "/videos";
-
     private static final String REVIEWS_END_POINT = "movie/" + MOVIE_ID_PARAM + "/reviews";
-
     private static final String QUERY_API_KEY_PARAM = "api_key";
 
     private final Context mContext;
@@ -40,48 +40,104 @@ public class MovieInfoDomain {
     }
 
     public List<MovieInfo> getPopularMovies() throws NetWorkConnectionException, JSonMovieParserException {
-        return getMoviesFromMovieDB(POPULAR_MOVIE_END_POINT);
+        return getMoviesFromMovieDB(POPULAR_MOVIE_END_POINT, MovieType.POPULAR_MOVIE);
     }
 
     public List<MovieInfo> getTopRatedMovies() throws NetWorkConnectionException, JSonMovieParserException {
-        return getMoviesFromMovieDB(TOP_RATED_END_POINT);
+        return getMoviesFromMovieDB(TOP_RATED_END_POINT, MovieType.TOP_MOVIE);
     }
 
-    private List<MovieInfo> getMoviesFromMovieDB(String movieTypePath) throws NetWorkConnectionException, JSonMovieParserException {
-        Uri uri = Uri.parse(MOVIEDB_API_URL).buildUpon()
-                .appendEncodedPath(movieTypePath)
-                .appendQueryParameter(QUERY_API_KEY_PARAM, getPublicApiKey())
-                .build();
+    private List<MovieInfo> getMoviesFromMovieDB(String movieTypeURL, @MovieType int type) throws NetWorkConnectionException, JSonMovieParserException {
+        List<MovieInfo> movies = new ArrayList<>();
 
-        NetworkConnection networkConnection = new NetworkConnection(mContext, uri);
-        String response = networkConnection.getResponseFromUri();
+        if (NetworkUtils.isDeviceConnectedToInternet(mContext)) {
+            JSonParser<MovieInfo> parser = new JSonMovieParser(type);
+            movies.addAll(getFromURL(movieTypeURL, parser));
+            insertIntoProvider(movies);
 
-        JSonParser<MovieInfo> parser = new JSonMovieParser(response);
-        List<MovieInfo> movies = parser.extract();
+        } else {
+            movies.addAll(listAllMovies(type));
+        }
 
         return movies;
     }
 
+    private void insertIntoProvider(List<MovieInfo> movies) {
+        ContentResolver contentResolver = mContext.getContentResolver();
+        contentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+
+        ContentValues[] values = new ContentValues[movies.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = createContentValuesFor(movies.get(i));
+        }
+
+        contentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, values);
+    }
+
+    private List<MovieInfo> listAllMovies(@MovieType int type) {
+        List<MovieInfo> movies = new ArrayList<>();
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+        String selection = String.format("%s=?", MovieContract.MovieEntry.TYPE);
+        String[] selectionArgs = new String[]{Integer.toString(type)};
+        Cursor cursor = contentResolver.query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                MovieContract.MovieEntry.COLUMNS,
+                selection,
+                selectionArgs,
+                MovieContract.MovieEntry._ID);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
+                movies.add(parseCursorToMovie(cursor));
+            }
+        }
+
+        return movies;
+    }
+
+    private ContentValues createContentValuesFor(MovieInfo movie) {
+        ContentValues values = new ContentValues();
+        values.put(MovieContract.MovieEntry.TITLE_COLUMN, movie.getTitle());
+        values.put(MovieContract.MovieEntry.POSTER_PATH_COLUMN, movie.getPosterPath());
+        values.put(MovieContract.MovieEntry.RATING_COLUMN, movie.getRating());
+        values.put(MovieContract.MovieEntry.RELEASE_DATE_COLUMN, movie.getReleaseDate());
+        values.put(MovieContract.MovieEntry.SYNOPSIS_COLUMN, movie.getPlotSynopsis());
+        values.put(MovieContract.MovieEntry.FAVORITE_COLUMN, movie.isFavorite());
+        values.put(MovieContract.MovieEntry.TYPE, movie.getType());
+        return values;
+    }
+
+    private MovieInfo parseCursorToMovie(Cursor cursor) {
+        long id = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry._ID));
+        String title = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.TITLE_COLUMN));
+        String releaseDate = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.RELEASE_DATE_COLUMN));
+        String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.POSTER_PATH_COLUMN));
+        String synopsis = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.SYNOPSIS_COLUMN));
+        double rating = cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.RATING_COLUMN));
+        boolean favorite = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.FAVORITE_COLUMN)) != 0;
+        @MovieType int type = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.TYPE));
+
+        return new MovieInfo(id, title, releaseDate, posterPath, synopsis, rating, favorite, type);
+    }
+
     public List<MovieTrailer> getTrailersFrom(MovieInfo movie) throws NetWorkConnectionException, JSonMovieParserException {
-        String id = Integer.toString(movie.getId());
+        String id = Long.toString(movie.getId());
         String formattedTrailerURL = TRAILER_END_POINT.replace(MOVIE_ID_PARAM, id);
 
-        Uri uri = Uri.parse(MOVIEDB_API_URL).buildUpon()
-                .appendEncodedPath(formattedTrailerURL)
-                .appendQueryParameter(QUERY_API_KEY_PARAM, getPublicApiKey())
-                .build();
-
-        NetworkConnection networkConnection = new NetworkConnection(mContext, uri);
-        String response = networkConnection.getResponseFromUri();
-
-        JSonParser<MovieTrailer> parser = new JsonMovieTrailerParser(response);
-        return parser.extract();
+        JSonParser<MovieTrailer> parser = new JsonMovieTrailerParser();
+        return getFromURL(formattedTrailerURL, parser);
     }
 
     public List<MovieReview> getReviewsFrom(MovieInfo movie) throws NetWorkConnectionException, JSonMovieParserException {
-        String id = Integer.toString(movie.getId());
+        String id = Long.toString(movie.getId());
         String formattedReviewURL = REVIEWS_END_POINT.replace(MOVIE_ID_PARAM, id);
 
+        JSonParser<MovieReview> parser = new JsonMovieReviewParser();
+        return getFromURL(formattedReviewURL, parser);
+    }
+
+    private <T> List<T> getFromURL(String formattedReviewURL, JSonParser<T> parser) throws NetWorkConnectionException, JSonMovieParserException {
         Uri uri = Uri.parse(MOVIEDB_API_URL).buildUpon()
                 .appendEncodedPath(formattedReviewURL)
                 .appendQueryParameter(QUERY_API_KEY_PARAM, getPublicApiKey())
@@ -90,8 +146,7 @@ public class MovieInfoDomain {
         NetworkConnection networkConnection = new NetworkConnection(mContext, uri);
         String response = networkConnection.getResponseFromUri();
 
-        JSonParser<MovieReview> parser = new JsonMovieReviewParser(response);
-        return parser.extract();
+        return parser.extract(response);
     }
 
     private String getPublicApiKey() {

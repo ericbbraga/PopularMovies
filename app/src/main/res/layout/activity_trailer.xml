@@ -25,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/error_message_trailers"
+            style="@style/TextAppearance.AppCompat.Headline"
             android:visibility="invisible"/>
 
         <include layout="@layout/trailer_layout"/>
