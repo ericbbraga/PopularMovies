@@ -47,39 +47,12 @@ public class MovieInfoDomain {
         return getMoviesFromMovieDB(TOP_RATED_END_POINT, MovieType.TOP_MOVIE);
     }
 
-    private List<MovieInfo> getMoviesFromMovieDB(String movieTypeURL, @MovieType int type) throws NetWorkConnectionException, JSonMovieParserException {
-        List<MovieInfo> movies = new ArrayList<>();
-
-        if (NetworkUtils.isDeviceConnectedToInternet(mContext)) {
-            JSonParser<MovieInfo> parser = new JSonMovieParser(type);
-            movies.addAll(getFromURL(movieTypeURL, parser));
-            insertIntoProvider(movies);
-
-        } else {
-            movies.addAll(listAllMovies(type));
-        }
-
-        return movies;
-    }
-
-    private void insertIntoProvider(List<MovieInfo> movies) {
-        ContentResolver contentResolver = mContext.getContentResolver();
-        contentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
-
-        ContentValues[] values = new ContentValues[movies.size()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = createContentValuesFor(movies.get(i));
-        }
-
-        contentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, values);
-    }
-
-    private List<MovieInfo> listAllMovies(@MovieType int type) {
+    public List<MovieInfo> getFavoriteMovies() {
         List<MovieInfo> movies = new ArrayList<>();
 
         ContentResolver contentResolver = mContext.getContentResolver();
-        String selection = String.format("%s=?", MovieContract.MovieEntry.TYPE);
-        String[] selectionArgs = new String[]{Integer.toString(type)};
+        String selection = String.format("%s=?", MovieContract.MovieEntry.FAVORITE_COLUMN);
+        String[] selectionArgs = new String[]{Integer.toString(1)};
         Cursor cursor = contentResolver.query(
                 MovieContract.MovieEntry.CONTENT_URI,
                 MovieContract.MovieEntry.COLUMNS,
@@ -96,8 +69,61 @@ public class MovieInfoDomain {
         return movies;
     }
 
+    private List<MovieInfo> getMoviesFromMovieDB(String movieTypeURL, @MovieType int type) throws NetWorkConnectionException, JSonMovieParserException {
+        List<MovieInfo> moviesFromDB = listAllMovies(type);
+
+        if (NetworkUtils.isDeviceConnectedToInternet(mContext)) {
+            JSonParser<MovieInfo> parser = new JSonMovieParser(type);
+            List<MovieInfo> movies = getFromURL(movieTypeURL, parser);
+
+            for (MovieInfo movie : movies) {
+                if (!movieExistsIntoLocalDatabase(movie, moviesFromDB)) {
+                    insertIntoProvider(movie);
+                }
+            }
+        }
+
+        return listAllMovies(type);
+    }
+
+    private void insertIntoProvider(MovieInfo movie) {
+        ContentResolver contentResolver = mContext.getContentResolver();
+        ContentValues values = createContentValuesFor(movie);
+        contentResolver.insert(MovieContract.MovieEntry.CONTENT_URI, values);
+    }
+
+    private boolean movieExistsIntoLocalDatabase(MovieInfo movieInfo, List<MovieInfo> movies) {
+        return movies.contains(movieInfo);
+    }
+
+    private List<MovieInfo> listAllMovies(@MovieType int type) {
+        List<MovieInfo> movies = new ArrayList<>();
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+        String selection = String.format("%s=?", MovieContract.MovieEntry.TYPE);
+        String[] selectionArgs = new String[]{Integer.toString(type)};
+        String sortOrder = String.format("%s ASC",
+                MovieContract.MovieEntry.TITLE_COLUMN);
+
+        Cursor cursor = contentResolver.query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                MovieContract.MovieEntry.COLUMNS,
+                selection,
+                selectionArgs,
+                sortOrder);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
+                movies.add(parseCursorToMovie(cursor));
+            }
+        }
+
+        return movies;
+    }
+
     private ContentValues createContentValuesFor(MovieInfo movie) {
         ContentValues values = new ContentValues();
+        values.put(MovieContract.MovieEntry._ID, movie.getId());
         values.put(MovieContract.MovieEntry.TITLE_COLUMN, movie.getTitle());
         values.put(MovieContract.MovieEntry.POSTER_PATH_COLUMN, movie.getPosterPath());
         values.put(MovieContract.MovieEntry.RATING_COLUMN, movie.getRating());

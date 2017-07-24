@@ -3,6 +3,7 @@
     <string name="error_message">An error occurred when the application tried get information about movies. Please check your internet connection and try again.</string>
     <string name="error_message_trailers">An error occurred when the application tried get information about trailers. Please check your internet connection and try again.</string>
     <string name="error_message_reviews">An error occurred when the application tried get information about reviews. Please check your internet connection and try again.</string>
+    <string name="error_favorite_movies">You have not set any movie as favorite. </string>
     <string name="movie_poster_content_description">Movie Poster</string>
     <string name="title_popular_movies">Popular Movies</string>
     <string name="title_top_rated_movies">Top Rated Movies</string>
@@ -13,4 +14,7 @@
     <string name="title_activity_review">ReviewActivity</string>
     <string name="empty_trailers_list">There are not trailers for this movie.</string>
     <string name="empty_reviews_list">There are not reviews for this movie.</string>
+    <string name="favorite_movies">Favorite Movies</string>
+    <string name="popular_movies">Popular Movies</string>
+    <string name="top_rated_movies">Top Rated Movies</string>
 </resources>

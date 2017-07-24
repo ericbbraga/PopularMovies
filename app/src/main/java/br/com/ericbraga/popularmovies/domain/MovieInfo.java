@@ -2,12 +2,13 @@ package br.com.ericbraga.popularmovies.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by ericbraga25.
  */
 
-public class MovieInfo implements Parcelable {
+public class MovieInfo implements Parcelable, Comparable<MovieInfo> {
     private long mId;
     private String mTitle;
     private String mReleaseDate;
@@ -103,5 +104,23 @@ public class MovieInfo implements Parcelable {
         }
     };
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        MovieInfo movieInfo = (MovieInfo) o;
+
+        return mId == movieInfo.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
+    @Override
+    public int compareTo(@NonNull MovieInfo o) {
+        return (int) (getId() - o.getId());
+    }
 }

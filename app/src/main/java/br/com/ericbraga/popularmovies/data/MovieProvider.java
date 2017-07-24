@@ -96,42 +96,6 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        switch(sMatcher.match(uri)) {
-            case PATH_MOVIES:
-                insert(values);
-                break;
-
-            default:
-                throw new UnsupportedOperationException();
-        }
-
-        return values.length;
-    }
-
-    private void insert(ContentValues[] values) {
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-
-        try {
-            database.beginTransaction();
-            for (ContentValues value : values) {
-
-                long id = database.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
-
-                if (id < 0) {
-                    throw new SQLException("An error occurred when tried insert the values into database");
-                }
-            }
-
-            database.setTransactionSuccessful();
-
-        } finally {
-            database.endTransaction();
-            database.close();
-        }
-    }
-
-    @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
         SQLiteDatabase database = mHelper.getWritableDatabase();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private static final int POPULAR = 1;
     private static final int TOP_RATED = 2;
+    private static final int FAVORITE = 3;
 
     private MovieInfoDomain mMovieDomain;
 
@@ -59,31 +61,39 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mAdapter = new MovieAdapter(context);
         mAdapter.setMovieHandler(handler);
         mRecyclerView.setAdapter(mAdapter);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         loadPopularMovies();
     }
 
-    public void showMovieInfoData() {
+    private void showMovieInfoData() {
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    public void hideMovieInfoData() {
+    private void hideMovieInfoData() {
         mRecyclerView.setVisibility(View.INVISIBLE);
     }
 
-    public void showErrorMessage() {
+    private void showErrorMessage() {
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
-    public void hideErrorMessage() {
+    private void hideErrorMessage() {
         mErrorMessageTextView.setVisibility(View.INVISIBLE);
     }
 
-    public void showProgressBar() {
+    private void setErrorMessage(@StringRes int resourceMessage) {
+        mErrorMessageTextView.setText(resourceMessage);
+    }
+
+    private void showProgressBar() {
         mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
-    public void hideProgressBar() {
+    private void hideProgressBar() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 
@@ -105,16 +115,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         int id = item.getItemId();
         switch (id) {
+            case R.id.menu_popular:
+            default:
+                loadPopularMovies();
+                break;
+
             case R.id.menu_refresh:
                 refresh();
                 break;
-            case R.id.menu_popular:
-                loadPopularMovies();
-                break;
+
             case R.id.menu_top_rated:
                 loadTopRatedMovies();
                 break;
-            default:
+            case R.id.menu_favorite:
+                loadFavoriteMovies();
                 break;
         }
 
@@ -122,10 +136,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     private void refresh() {
-        if (mLatestOption == POPULAR) {
-            loadPopularMovies();
-        } else {
-            loadTopRatedMovies();
+        switch (mLatestOption) {
+            case POPULAR:
+            default:
+                loadPopularMovies();
+                break;
+            case TOP_RATED:
+                loadTopRatedMovies();
+                break;
+            case FAVORITE:
+                loadFavoriteMovies();
+                break;
         }
     }
 
@@ -141,6 +162,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         new TopRatedAsyncTask().execute();
     }
 
+    private void loadFavoriteMovies() {
+        mLatestOption = FAVORITE;
+        new FavoriteAsyncTask().execute();
+    }
+
     private abstract class MainLoaderAsyncTask extends AsyncTask<Void, Void, List<MovieInfo>> {
 
         private Exception mException;
@@ -149,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressBar();
+            hideMovieInfoData();
         }
 
         @Override
@@ -165,14 +192,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         abstract List<MovieInfo> getMovies()
                 throws JSonMovieParserException, NetWorkConnectionException;
 
+        void updateErrorMessage() {
+            setErrorMessage(R.string.error_message);
+        }
+
         @Override
         protected void onPostExecute(List<MovieInfo> movies) {
             super.onPostExecute(movies);
             hideProgressBar();
 
             if (movies == null || movies.isEmpty()) {
+                updateErrorMessage();
                 showErrorMessage();
-                hideMovieInfoData();
 
             } else {
                 hideErrorMessage();
@@ -198,7 +229,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
     }
 
+    private class FavoriteAsyncTask extends MainLoaderAsyncTask {
+        @Override
+        List<MovieInfo> getMovies() throws JSonMovieParserException, NetWorkConnectionException {
+            return mMovieDomain.getFavoriteMovies();
+        }
 
-
+        @Override
+        void updateErrorMessage() {
+            setErrorMessage(R.string.error_favorite_movies);
+        }
+    }
 
 }

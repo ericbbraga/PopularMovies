@@ -10,14 +10,22 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/menu_popular"
-        android:title="Popular Movies"
+        android:id="@+id/menu_favorite"
+        android:title="@string/favorite_movies"
         android:orderInCategory="2"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menu_top_rated"
-        android:title="Top Rated Movies"
+        android:id="@+id/menu_popular"
+        android:title="@string/popular_movies"
         android:orderInCategory="3"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_top_rated"
+        android:title="@string/top_rated_movies"
+        android:orderInCategory="4"
+        app:showAsAction="never"/>
+
+
 </menu>

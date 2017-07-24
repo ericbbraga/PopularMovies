@@ -21,7 +21,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String createTable = String.format(
                 "CREATE TABLE %s (" +
-                        "%s INTEGER AUTO_INCREMENT," +
+                        "%s INTEGER," +
                         "%s VARCHAR(100)," +
                         "%s VARCHAR(100)," +
                         "%s VARCHAR(100)," +
