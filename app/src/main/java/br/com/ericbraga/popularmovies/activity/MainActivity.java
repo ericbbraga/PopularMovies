@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final int POPULAR = 1;
     private static final int TOP_RATED = 2;
     private static final int FAVORITE = 3;
+    public static final String LATEST_OPTION_BUNDLE_PARAM = "LATEST_OPTION";
 
     private MovieInfoDomain mMovieDomain;
 
@@ -64,9 +65,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        loadPopularMovies();
+    protected void onResume() {
+        super.onResume();
+        loadMovies();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(LATEST_OPTION_BUNDLE_PARAM, mLatestOption);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mLatestOption = savedInstanceState.getInt(LATEST_OPTION_BUNDLE_PARAM);
     }
 
     private void showMovieInfoData() {
@@ -116,12 +129,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_popular:
-            default:
                 loadPopularMovies();
                 break;
 
             case R.id.menu_refresh:
-                refresh();
+                loadMovies();
                 break;
 
             case R.id.menu_top_rated:
@@ -135,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
-    private void refresh() {
+    private void loadMovies() {
         switch (mLatestOption) {
             case POPULAR:
             default:
@@ -164,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private void loadFavoriteMovies() {
         mLatestOption = FAVORITE;
+        setTitle(R.string.favorite_movies);
         new FavoriteAsyncTask().execute();
     }
 

@@ -121,6 +121,6 @@ public class MovieInfo implements Parcelable, Comparable<MovieInfo> {
 
     @Override
     public int compareTo(@NonNull MovieInfo o) {
-        return (int) (getId() - o.getId());
+        return getTitle().compareTo(o.getTitle());
     }
 }

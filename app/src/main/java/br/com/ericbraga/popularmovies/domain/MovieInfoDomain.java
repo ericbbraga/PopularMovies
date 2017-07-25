@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.com.ericbraga.popularmovies.configuration.Configurations;
@@ -61,11 +62,12 @@ public class MovieInfoDomain {
                 MovieContract.MovieEntry._ID);
 
         if (cursor != null && cursor.moveToFirst()) {
-            while (cursor.moveToNext()) {
+            do {
                 movies.add(parseCursorToMovie(cursor));
-            }
+            } while (cursor.moveToNext());
         }
 
+        Collections.sort(movies);
         return movies;
     }
 
@@ -103,7 +105,7 @@ public class MovieInfoDomain {
         String selection = String.format("%s=?", MovieContract.MovieEntry.TYPE);
         String[] selectionArgs = new String[]{Integer.toString(type)};
         String sortOrder = String.format("%s ASC",
-                MovieContract.MovieEntry.TITLE_COLUMN);
+                MovieContract.MovieEntry._ID);
 
         Cursor cursor = contentResolver.query(
                 MovieContract.MovieEntry.CONTENT_URI,
@@ -113,9 +115,9 @@ public class MovieInfoDomain {
                 sortOrder);
 
         if (cursor != null && cursor.moveToFirst()) {
-            while (cursor.moveToNext()) {
+            do {
                 movies.add(parseCursorToMovie(cursor));
-            }
+            } while (cursor.moveToNext());
         }
 
         return movies;

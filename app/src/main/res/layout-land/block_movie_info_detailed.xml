@@ -22,10 +22,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
-        style="@style/Base.TextAppearance.AppCompat.Display1"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
         app:layout_constraintLeft_toRightOf="@+id/iv_poster_detail"
         app:layout_constraintTop_toTopOf="@+id/iv_poster_detail"
-        tools:text="2017" />
+        tools:text="2017-10-04" />
 
     <TextView
         android:id="@+id/tv_movie_rating_detail"
