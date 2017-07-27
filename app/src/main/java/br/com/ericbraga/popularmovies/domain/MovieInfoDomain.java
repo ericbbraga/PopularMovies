@@ -178,6 +178,6 @@ public class MovieInfoDomain {
     }
 
     private String getPublicApiKey() {
-        return new Configurations(mContext).getPublicKey();
+        return Configurations.getInstance().getPublicKey();
     }
 }

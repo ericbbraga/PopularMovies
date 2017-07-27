@@ -7,10 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import java.util.Locale;
 
@@ -42,7 +43,7 @@ public class DetailActivity extends Activity {
         TextView releaseDateTextView = (TextView) findViewById(R.id.tv_movie_release_date_detail);
         TextView synopsisTextView = (TextView) findViewById(R.id.tv_movie_synopsis_detail);
         TextView ratingTextView = (TextView) findViewById(R.id.tv_movie_rating_detail);
-        final ToggleButton favoriteButton = (ToggleButton) findViewById(R.id.btn_favorite);
+        final FloatingActionButton favoriteButton = (FloatingActionButton) findViewById(R.id.btn_favorite);
 
         View buttonTrailer = findViewById(R.id.btn_trailers);
         View buttonReview = findViewById(R.id.btn_reviews);
@@ -61,14 +62,26 @@ public class DetailActivity extends Activity {
             }
         });
 
-        favoriteButton.setChecked(mMovieInfo.isFavorite());
+        favoriteButton.setImageResource(mMovieInfo.isFavorite() ? R.drawable.ic_star_fill :
+                R.drawable.ic_star);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int favorite = favoriteButton.isChecked() ? 1 : 0;
+                boolean favoriteValue = !mMovieInfo.isFavorite();
+                int favorite = favoriteValue ? 1 : 0;
                 if (updateMovie(context, favorite) > 0) {
-                    mMovieInfo.setFavorite(!mMovieInfo.isFavorite());
+                    mMovieInfo.setFavorite(favoriteValue);
                 }
+
+                favoriteButton.setImageResource(mMovieInfo.isFavorite() ? R.drawable.ic_star_fill :
+                        R.drawable.ic_star);
+
+                int messageRes = favoriteValue ?
+                        R.string.change_favorite_status_movie : R.string.change_unfavorite_status_movie;
+
+                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.myCoordinatorLayout),
+                        messageRes, Snackbar.LENGTH_SHORT);
+                mySnackbar.show();
             }
         });
 

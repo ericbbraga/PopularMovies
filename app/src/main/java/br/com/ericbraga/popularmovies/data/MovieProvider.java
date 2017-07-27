@@ -137,7 +137,7 @@ public class MovieProvider extends ContentProvider {
                 String where = String.format("%s=?",MovieContract.MovieEntry._ID );
                 String[] whereArgs = new String[]{id};
 
-                database.update(MovieContract.MovieEntry.TABLE_NAME, values, where, whereArgs);
+                updateRows = database.update(MovieContract.MovieEntry.TABLE_NAME, values, where, whereArgs);
                 database.close();
                 break;
 

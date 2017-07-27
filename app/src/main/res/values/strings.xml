@@ -17,4 +17,6 @@
     <string name="favorite_movies">Favorite Movies</string>
     <string name="popular_movies">Popular Movies</string>
     <string name="top_rated_movies">Top Rated Movies</string>
+    <string name="change_favorite_status_movie">The movie was marked as favorite</string>
+    <string name="change_unfavorite_status_movie">The movie was unmarked as favorite</string>
 </resources>

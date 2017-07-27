@@ -4,4 +4,6 @@ The Popular Movies application is an app to get information about what are the p
 
 ## Configuration
 
-The application uses the public Movie Db Api and it requires a public key to work properly. So, if you want to test the code, please create an account on (https://www.themoviedb.org) and after that add your public key __API Key (v3 auth)__ into the file __moviedb_public_key__
+The application uses the public Movie Db Api and it requires a public key to work properly. So, if you want to test the code, please create an account on (https://www.themoviedb.org) and after that add your public key __API Key (v3 auth)__ into the file __gradle.properties__ as follow:
+
+MOVIE_DB_KEY="__>>public_db_key<<__"

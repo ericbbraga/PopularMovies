@@ -24,7 +24,9 @@ android {
         }
     }
 
-
+    buildTypes.each {
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API_TOKEN', MOVIE_DB_KEY
+    }
 }
 
 dependencies {
@@ -34,6 +36,7 @@ dependencies {
     })
 
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:recyclerview-v7:25.3.1'
